@@ -18,4 +18,4 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-        repository: thrnz/docker-wireguard-pia
+        repository: bfg100k/docker-transmission-wg-pia

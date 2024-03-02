@@ -1,6 +1,6 @@
-# docker-wireguard-pia
+# docker-transmission-wg-pia
 
-A Docker container for using WireGuard with PIA.
+A Docker container for running Transmission with PrivateInternetAccess' WireGuard servers.
 
 ## Requirements
 * Ideally the host must already support WireGuard. Pre 5.6 kernels may need to have the module manually installed. `wg-quick` should automatically fall back to a userspace implementation (`wireguard-go`) if the kernel module is missing, however the container may need access to the `/dev/net/tun` device for this to work.

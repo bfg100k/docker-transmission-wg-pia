@@ -28,11 +28,16 @@ pf_persistfile="$configdir/portsig.json"
 
 # Run custom scripts at the appropriate time if present
 # We also run custom commands specified by the PRE_UP, POST_UP, PRE_DOWN, and POST_DOWN env vars at the same time
-custom_scriptdir="/pia/scripts"
+custom_scriptdir="/scripts"
 pre_up_script="$custom_scriptdir/pre-up.sh"
 post_up_script="$custom_scriptdir/post-up.sh"
 pre_down_script="$custom_scriptdir/pre-down.sh"
 post_down_script="$custom_scriptdir/post-down.sh"
+
+# Config for Transmission and TinyProxy
+POST_UP="$custom_scriptdir/start-services.sh"
+#PORT_SCRIPT needs to be exported as it is used in pf_success.sh which is called later by another script!
+export PORT_SCRIPT="$custom_scriptdir/pf-transmission.sh"
 
 sharedir="/pia-shared"
 # Set env var PORT_FILE to override where the forwarded port number is dumped
