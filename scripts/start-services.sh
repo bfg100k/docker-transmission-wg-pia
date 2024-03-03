@@ -59,24 +59,24 @@ LOGFILE=${TRANSMISSION_HOME}/transmission.log
 # Setting up Transmission user
 . /opt/transmission/userSetup.sh
 
-# Create and initiaise 
+# Setting up settings.json file 
 if [[ -s "${TRANSMISSION_HOME}/settings.json" ]]; then
-  echo "[#] Found existing settings.json file in ${TRANSMISSION_HOME}."
-  echo "[#] All settings from env variables (except username and password) will be IGNORED."
-  #update bind address
-  sed -i -r "s/(\"bind-address-ipv4\": )(.*)/\1\"$TRANSMISSION_BIND_ADDRESS_IPV4\",/" "${TRANSMISSION_HOME}/settings.json"
-  #update authentication and credentials if set
-  if [[ -n "$TRANSMISSION_RPC_USERNAME" ]]; then
-  sed -i -r "s/(\"rpc-authentication-required\": )(.*)/\1true,/" "${TRANSMISSION_HOME}/settings.json"
-  sed -i -r "s/(\"rpc-username\": )(.*)/\1\"$TRANSMISSION_RPC_USERNAME\",/" "${TRANSMISSION_HOME}/settings.json"
-  sed -i -r "s/(\"rpc-password\": )(.*)/\1\"$TRANSMISSION_RPC_PASSWORD\",/" "${TRANSMISSION_HOME}/settings.json"
-  fi
+    echo "[#] Found existing settings.json file in ${TRANSMISSION_HOME}."
+    echo "[#] All settings from env variables (except username and password) will be IGNORED."
+	# File exists, so just update bind address and authentication (if set)
+    sed -i -r "s/(\"bind-address-ipv4\": )(.*)/\1\"$TRANSMISSION_BIND_ADDRESS_IPV4\",/" "${TRANSMISSION_HOME}/settings.json"
+    if [[ -n "$TRANSMISSION_RPC_USERNAME" ]]; then
+        sed -i -r "s/(\"rpc-authentication-required\": )(.*)/\1true,/" "${TRANSMISSION_HOME}/settings.json"
+        sed -i -r "s/(\"rpc-username\": )(.*)/\1\"$TRANSMISSION_RPC_USERNAME\",/" "${TRANSMISSION_HOME}/settings.json"
+        sed -i -r "s/(\"rpc-password\": )(.*)/\1\"$TRANSMISSION_RPC_PASSWORD\",/" "${TRANSMISSION_HOME}/settings.json"
+    fi
 else
-  echo "[#] Generating transmission settings.json from env variables"
-  dockerize -template /opt/transmission/settings.tmpl:${TRANSMISSION_HOME}/settings.json
+    # File does not exist, let's create it using pre-defined template and user overrides in env vars
+    echo "[#] Generating transmission settings.json from env variables"
+    dockerize -template /opt/transmission/settings.tmpl:${TRANSMISSION_HOME}/settings.json
 
-  echo "[#] sed'ing True to true"
-  sed -i 's/True/true/g' ${TRANSMISSION_HOME}/settings.json
+    echo "[#] sed'ing True to true"
+    sed -i 's/True/true/g' ${TRANSMISSION_HOME}/settings.json
 fi
 
 if [[ ! -e "/dev/random" ]]; then
