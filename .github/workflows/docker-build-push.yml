@@ -33,7 +33,7 @@ jobs:
         id: docker-meta
         uses: docker/metadata-action@v5
         with:
-          images: bfg100k/docker-transmission-wg-pia
+          images: bfg100k/transmission-wg-pia
           tags: |
             # Tag branches with branch name, but disable for default branch
             type=ref,event=branch,enable=${{ github.ref_name != 'master' }}
