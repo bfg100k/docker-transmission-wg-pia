@@ -1,7 +1,7 @@
 version: '3'
 services:
     transmission-wg:
-        image: custom/docker-transmission-wg-pia:${IMG_TAG:?error}
+        image: custom/transmission-wg-pia:${IMG_TAG:?error}
         build:
           context: .
         volumes:
@@ -12,10 +12,7 @@ services:
             # Edit this to the directory that Transmission configuration should be stored, if you'd like it persistent. Also edit TRANSMISSION_HOME to match if necessary.
             - ${PVOL_ROOT:?error}/btTransmission:/config
             # Edit this to the directory your Transmission downloads should go
-            - /volume1/Scratch/btDownloads:/data
-            - /volume1/Scratch/btWatch:/data/watch
-            - /volume1/Media/:/Media
-            - "/volume1/Apps Central/:/Apps"
+            - ${PVOL_ROOT:?error}/btData:/data
             # Use host system timezone
             - /etc/localtime:/etc/localtime:ro
             - /etc/TZ:/etc/timezone:ro
@@ -46,6 +43,11 @@ services:
             #- WEBPROXY_ENABLED=true
             #- WEBPROXY_PORT=8888
             #- HEALTH_CHECK_HOST=google.com
+        ports:
+            # Transmission
+            - 9091:9091
+            # Tinyproxy
+            #- 8888:8888
         sysctls:
             # The wg-quick script tries to set this when setting up routing, however this requires running in
             # the container with the --privileged flag set. Setting it here instead if needed means the container 
@@ -56,17 +58,9 @@ services:
             - net.ipv6.conf.default.disable_ipv6=1
             - net.ipv6.conf.all.disable_ipv6=1
             - net.ipv6.conf.lo.disable_ipv6=1
-        networks:
-          dmz:
-            ipv4_address: 192.168.10.210
         # The container has no recovery logic. Use a healthcheck to catch disconnects.
         healthcheck:
             test: ping -c 1 www.google.com || exit 1
             interval: 90s
             timeout: 10s
             retries: 3
-
-networks:
-  dmz:
-    name: net_LAN_ETH1
-    external: true
