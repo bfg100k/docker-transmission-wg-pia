@@ -122,7 +122,7 @@ set_proxy_port() {
     fi
 
     echo "[#] Setting tinyproxy port to ${1}.";
-    sed -i -e"s,^Port .*,Port ${1}," ${2}
+    sed -i -e "s,^Port .*,Port ${1}," ${2}
 }
 
 set_proxy_authentication() {
@@ -132,7 +132,7 @@ set_proxy_authentication() {
 
 set_proxy_bind_ip() {
     echo "[#] Set proxy bind IP to ${WG_IP}."
-    sed -i -e "s,^#Bind .*,Bind ${1}," ${2}
+    sed -i -r -e "s,^#?Bind .*,Bind ${1}," ${2}
 }
 
 if [[ "${WEBPROXY_ENABLED}" = "true" ]]; then
@@ -152,14 +152,15 @@ if [[ "${WEBPROXY_ENABLED}" = "true" ]]; then
     fi
 
     # Allow all clients
-    sed -i -e"s/^Allow /#Allow /" ${PROXY_CONF}
+    sed -i -e "s/^Allow /#Allow /" ${PROXY_CONF}
 
     # Disable Via Header for privacy (leaks that you're using a proxy)
     sed -i -e "s/#DisableViaHeader/DisableViaHeader/" ${PROXY_CONF}
+    # Turn on syslog
 
     # Lower log level for privacy (writes dns names by default)
     sed -i -e "s/LogLevel Info/LogLevel Critical/" ${PROXY_CONF}
 
-    tinyproxy -d -c ${PROXY_CONF}
+    tinyproxy -c ${PROXY_CONF}
     echo "[#] Tinyproxy startup script complete."
 fi
