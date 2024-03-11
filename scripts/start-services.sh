@@ -156,7 +156,9 @@ if [[ "${WEBPROXY_ENABLED}" = "true" ]]; then
 
     # Disable Via Header for privacy (leaks that you're using a proxy)
     sed -i -e "s/#DisableViaHeader/DisableViaHeader/" ${PROXY_CONF}
+
     # Turn on syslog
+    sed -i -e "s/^#Syslog On/Syslog On/" ${PROXY_CONF}
 
     # Lower log level for privacy (writes dns names by default)
     sed -i -e "s/LogLevel Info/LogLevel Critical/" ${PROXY_CONF}
