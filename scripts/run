@@ -12,6 +12,7 @@
 [[ "$PORT_FATAL" =~ ^[0-1]$ ]] || PORT_FATAL=0
 # Should be a positive integer
 [[ "$KEEPALIVE" =~ ^[0-9]+$ ]] || KEEPALIVE=0
+[[ "$META_PORT" =~ ^[0-9]+$ ]] || export META_PORT=443
 # Maybe also check the following. They are all blank by default.
 # LOCAL_NETWORK=
 # PIA_CN=
@@ -61,12 +62,15 @@ firewall_init () {
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-  # Temporarily allow DNS queries
+  # We also need to temporarily allow the following:
+  # DNS queries
   iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
-
-  # We also need to temporarily allow the following
+  # HTTPS to download the server list and access API for generating auth token
   iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT
+  # API access to register the public WireGuard key
   iptables -A OUTPUT -p tcp --dport 1337 -j ACCEPT
+  # Non-default API port if set
+  [ "$META_PORT" -ne 443 ] && iptables -A OUTPUT -p tcp --dport "$META_PORT" -j ACCEPT
 }
 
 # Alpine 3.19 changed the default iptables backend to iptables-nft
@@ -141,9 +145,11 @@ get_auth_token () {
   [ -z "$PASS" ] && echo "$(date): PIA password not set. Unable to retrieve new auth token." && fatal_error
   [ -z "$USER" ] && echo "$(date): PIA username not set. Unable to retrieve new auth token." && fatal_error
   echo "$(date): Generating auth token"
-  if ! /scripts/pia-auth.sh -u "$USER" -p "$PASS" > "$tokenfile"; then
+  local token
+  if ! token=$(/scripts/pia-auth.sh -u "$USER" -p "$PASS" -n "$META_CN" -i "$META_IP" -o "$META_PORT" -c "$pia_cacrt"); then
     echo "$(date): Failed to acquire new auth token" && fatal_error
   fi
+  echo "$token" > "$tokenfile"
   chmod 600 "$tokenfile"
 }
 
@@ -176,6 +182,7 @@ for location in ${LOC//,/ }; do
   if [ "$result" -eq 2 ]; then
     # Reauth and retry if auth failed
     # An auth error implies that the location id is valid and the endpoint responsive
+    rm "$tokenfile"
     get_auth_token
     gen_wgconf "$location" || fatal_error
   elif [ "$result" -eq 3 ]; then
@@ -228,6 +235,7 @@ if [ $FIREWALL -eq 1 ]; then
   iptables -D OUTPUT -p udp --dport 53 -j ACCEPT
   iptables -D OUTPUT -p tcp --dport 443 -j ACCEPT
   iptables -D OUTPUT -p tcp --dport 1337 -j ACCEPT
+  [ "$META_PORT" -ne 443 ] && iptables -D OUTPUT -p tcp --dport "$META_PORT" -j ACCEPT
 
   # Allow docker network input/output
   for iface in /sys/class/net/*; do
