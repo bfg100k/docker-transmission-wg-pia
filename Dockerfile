@@ -1,7 +1,6 @@
 FROM alpine:latest
 
-ARG BUILDARCH
-ARG DOCKERIZE_ARCH=$BUILDARCH
+ARG TARGETARCH
 ARG DOCKERIZE_VERSION=v0.7.0
 
 RUN apk add --no-cache \
@@ -127,8 +126,8 @@ COPY ./RegionsListPubKey.pem /RegionsListPubKey.pem
 
 # Get additionl binaries and Transmission themes
 RUN mkdir /opt/transmission-ui/ \
-    && echo "Install dockerize $DOCKERIZE_VERSION ($DOCKERIZE_ARCH)" \
-    && wget -qO- https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-$DOCKERIZE_ARCH-$DOCKERIZE_VERSION.tar.gz | tar xz -C /usr/bin \
+    && echo "Install dockerize $DOCKERIZE_VERSION ($TARGETARCH)" \
+    && wget -qO- https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-$TARGETARCH-$DOCKERIZE_VERSION.tar.gz | tar xz -C /usr/bin \
     && mkdir -p /opt/transmission-ui \
     && echo "Install Combustion" \
     && wget -qO- https://github.com/Secretmapper/combustion/archive/release.tar.gz | tar xz -C /opt/transmission-ui \
