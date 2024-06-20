@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG DOCKERIZE_ARCH=amd64
+ARG DOCKERIZE_ARCH=$BUILDARCH
 ARG DOCKERIZE_VERSION=v0.7.0
 
 RUN apk add --no-cache \
