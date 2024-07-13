@@ -36,6 +36,7 @@ services:
             - PUID=${TRANS_PUID}
             - PGID=${TRANS_PGID}
             #- TRANSMISSION_HOME=/config
+            - TRANSMISSION_LOG_FILE=/config/logs/transmission.log
             # If you use authentication in your existing settings, you will need to set them here so that the
             # port forwarding script will work correctly
             - TRANSMISSION_RPC_USERNAME=${TRANS_USER}

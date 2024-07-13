@@ -33,6 +33,9 @@ case $TRANSMISSION_UI in
         ;;
 esac
 
+# Setting up Transmission user
+. /opt/transmission/userSetup.sh
+
 # Setting logfile to local file and set log level if specified
 if [[ ! -n "${TRANSMISSION_LOG_LEVEL}" ]]; then
     case ${TRANSMISSION_LOG_LEVEL} in
@@ -54,10 +57,13 @@ if [[ ! -n "${TRANSMISSION_LOG_LEVEL}" ]]; then
             ;;
     esac
 fi
-LOGFILE=${TRANSMISSION_HOME}/transmission.log
 
-# Setting up Transmission user
-. /opt/transmission/userSetup.sh
+if [[ ! -n "${TRANSMISSION_LOG_FILE}" ]]; then
+	LOGFILE=${TRANSMISSION_HOME}/transmission.log
+else
+	exec su -m ${RUN_AS} -s /bin/bash -c "mkdir -p \"$(dirname $TRANSMISSION_LOG_FILE)\" && touch \"$TRANSMISSION_LOG_FILE\""
+	LOGFILE=${TRANSMISSION_LOG_FILE}
+fi
 
 # Setting up settings.json file 
 if [[ -s "${TRANSMISSION_HOME}/settings.json" ]]; then
