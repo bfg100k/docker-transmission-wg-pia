@@ -37,7 +37,7 @@ esac
 . /opt/transmission/userSetup.sh
 
 # Setting logfile to local file and set log level if specified
-if [[ ! -n "${TRANSMISSION_LOG_LEVEL}" ]]; then
+if [[ -n "${TRANSMISSION_LOG_LEVEL}" ]]; then
     case ${TRANSMISSION_LOG_LEVEL} in
         "none")
             echo "[#] Setting Transmission log level to none (0)."
@@ -57,12 +57,12 @@ if [[ ! -n "${TRANSMISSION_LOG_LEVEL}" ]]; then
             ;;
     esac
 fi
-
 if [[ ! -n "${TRANSMISSION_LOG_FILE}" ]]; then
 	LOGFILE=${TRANSMISSION_HOME}/transmission.log
 else
-	exec su -m ${RUN_AS} -s /bin/bash -c "mkdir -p \"$(dirname $TRANSMISSION_LOG_FILE)\" && touch \"$TRANSMISSION_LOG_FILE\""
 	LOGFILE=${TRANSMISSION_LOG_FILE}
+	su -m ${RUN_AS} -s /bin/bash -c "mkdir -p \"$(dirname ${LOGFILE})\" && touch \"${LOGFILE}\""
+	echo "TRANSMISSION_LOG_FILE specified. Making sure file exists"
 fi
 
 # Setting up settings.json file 
