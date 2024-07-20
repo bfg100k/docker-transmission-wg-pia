@@ -40,6 +40,11 @@ POST_UP="$custom_scriptdir/start-services.sh"
 #PORT_SCRIPT needs to be exported as it is used in pf_success.sh which is called later by another script!
 export PORT_SCRIPT="$custom_scriptdir/pf-transmission.sh"
 
+# load transmission password from file if specified
+[ -r "$TRANSMISSION_RPC_PASSWORD_FILE" ] && \
+echo "$(date): Reading password from $TRANSMISSION_RPC_PASSWORD_FILE" \
+&& export TRANSMISSION_RPC_PASSWORD=$(<"$TRANSMISSION_RPC_PASSWORD_FILE")
+
 sharedir="/pia-shared"
 # Set env var PORT_FILE to override where the forwarded port number is dumped
 # Might need to handle setting file ownership/permissions too
