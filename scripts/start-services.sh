@@ -72,6 +72,7 @@ if [[ -s "${TRANSMISSION_HOME}/settings.json" ]]; then
 	# File exists, so just update bind address and authentication (if set)
     sed -i -r "s/(\"bind-address-ipv4\": )(.*)/\1\"$TRANSMISSION_BIND_ADDRESS_IPV4\",/" "${TRANSMISSION_HOME}/settings.json"
     if [[ -n "$TRANSMISSION_RPC_USERNAME" ]]; then
+		[ -r "$TRANSMISSION_RPC_PASSWORD_FILE" ] && echo "$(date): Reading password from $TRANSMISSION_RPC_PASSWORD_FILE" && TRANSMISSION_RPC_PASSWORD=$(<"$TRANSMISSION_RPC_PASSWORD_FILE")
         sed -i -r "s/(\"rpc-authentication-required\": )(.*)/\1true,/" "${TRANSMISSION_HOME}/settings.json"
         sed -i -r "s/(\"rpc-username\": )(.*)/\1\"$TRANSMISSION_RPC_USERNAME\",/" "${TRANSMISSION_HOME}/settings.json"
         sed -i -r "s/(\"rpc-password\": )(.*)/\1\"$TRANSMISSION_RPC_PASSWORD\",/" "${TRANSMISSION_HOME}/settings.json"
