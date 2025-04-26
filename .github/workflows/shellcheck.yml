@@ -8,4 +8,4 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Run ShellCheck
-      run: shellcheck run ./*.sh ./extra/*.sh
+      run: shellcheck run ./*.sh ./scripts/*.sh

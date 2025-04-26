@@ -166,7 +166,6 @@ VOLUME /pia
 # Store stuff that might be shared with another container here (eg forwarded port)
 VOLUME /pia-shared
 
-<<<<<<< HEAD
 # Transmission related volumes
 VOLUME /config
 VOLUME /data
