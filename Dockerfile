@@ -8,8 +8,10 @@ RUN apk add --no-cache \
     shadow \
     ca-certificates \
     curl \
+    grepcidr3 \
     iptables \
     iptables-legacy \
+    libcap-utils \
     jq \
     openssl \
     transmission-daemon \
@@ -164,6 +166,7 @@ VOLUME /pia
 # Store stuff that might be shared with another container here (eg forwarded port)
 VOLUME /pia-shared
 
+<<<<<<< HEAD
 # Transmission related volumes
 VOLUME /config
 VOLUME /data
@@ -174,5 +177,8 @@ EXPOSE 8888
 
 # Health Check
 # HEALTHCHECK --interval=5m CMD /scripts/healthcheck.sh
+
+ARG BUILDINFO=manual
+ENV BUILDINFO=${BUILDINFO}
 
 CMD ["/scripts/run"]
