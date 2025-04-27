@@ -1,4 +1,4 @@
-FROM alpine:latest
+FROM alpine:3.20
 
 ARG TARGETARCH
 ARG DOCKERIZE_VERSION=v0.7.0
@@ -14,8 +14,8 @@ RUN apk add --no-cache \
     libcap-utils \
     jq \
     openssl \
-    transmission-daemon=~4.0.5 \
-    transmission-remote=~4.0.5 \
+    transmission-daemon \
+    transmission-remote \
     tinyproxy \
     wireguard-tools
 
