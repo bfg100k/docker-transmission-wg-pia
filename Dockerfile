@@ -14,8 +14,8 @@ RUN apk add --no-cache \
     libcap-utils \
     jq \
     openssl \
-    transmission-daemon \
-    transmission-remote \
+    transmission-daemon=~4.0.5 \
+    transmission-remote=~4.0.5 \
     tinyproxy \
     wireguard-tools
 
